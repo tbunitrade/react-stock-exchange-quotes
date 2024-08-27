@@ -63,7 +63,7 @@ function App() {
       setStats(newStats);
 
       // Отправка статистики на сервер
-      fetch('http://localhost:5000/save-statistics.php', {
+      fetch('http://localhost:8888/reactjs/spa-stock-quotes/save-statistics.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

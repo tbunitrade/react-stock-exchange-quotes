@@ -1,6 +1,6 @@
 <?php
 // Включаем файл конфигурации базы данных
-include 'db-config.php';
+include 'db-connect.php';
 
 // Подключение к базе данных
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -39,20 +39,25 @@ if ($result->num_rows == 0) {
 // Получение данных из запроса
 $data = json_decode(file_get_contents('php://input'), true);
 
-$mean = $data['mean'];
-$stdDev = $data['stdDev'];
-$mode = $data['mode'];
-$min = $data['min'];
-$max = $data['max'];
-$timestamp = $data['timestamp'];
+// Проверяем, что данные получены и содержат необходимые ключи
+if (isset($data['mean'], $data['stdDev'], $data['mode'], $data['min'], $data['max'], $data['timestamp'])) {
+    $mean = $data['mean'];
+    $stdDev = $data['stdDev'];
+    $mode = $data['mode'];
+    $min = $data['min'];
+    $max = $data['max'];
+    $timestamp = $data['timestamp'];
 
-// SQL-запрос для вставки данных
-$sql = "INSERT INTO statistics (mean, std_dev, mode, min, max, timestamp) VALUES ('$mean', '$stdDev', '$mode', '$min', '$max', '$timestamp')";
+    // SQL-запрос для вставки данных
+    $sql = "INSERT INTO statistics (mean, std_dev, mode, min, max, timestamp) VALUES ('$mean', '$stdDev', '$mode', '$min', '$max', '$timestamp')";
 
-if ($conn->query($sql) === TRUE) {
-    echo json_encode(["message" => "Statistics saved successfully"]);
+    if ($conn->query($sql) === TRUE) {
+        echo json_encode(["message" => "Statistics saved successfully"]);
+    } else {
+        echo json_encode(["error" => "Error: " . $sql . "<br>" . $conn->error]);
+    }
 } else {
-    echo json_encode(["error" => "Error: " . $sql . "<br>" . $conn->error]);
+    echo json_encode(["error" => "Invalid or missing data"]);
 }
 
 // Закрытие соединения
