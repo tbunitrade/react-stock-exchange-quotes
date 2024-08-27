@@ -38,7 +38,6 @@ function App() {
       console.log('WebSocket connection closed');
     };
 
-    // Cleanup WebSocket connection when the component unmounts
     return () => {
       socket.close();
     };
@@ -52,19 +51,38 @@ function App() {
       const min = calculateMin(quotes);
       const max = calculateMax(quotes);
 
-      setStats({
+      const newStats = {
         mean,
         stdDev,
         mode,
         min,
         max,
-      });
+        timestamp: new Date().toISOString(), // добавим дату и время расчетов
+      };
+
+      setStats(newStats);
+
+      // Отправка статистики на сервер
+      fetch('http://localhost:5000/save-statistics.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newStats),
+      })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Statistics saved:', data);
+          })
+          .catch((error) => {
+            console.error('Error saving statistics:', error);
+          });
     }
   }, [quotes]);
 
   return (
       <div className="App">
-        <h1>Stock Quotes</h1>
+        <h1>Stock Quotes Statistics</h1>
         <div>
           <p>Mean: {stats.mean}</p>
           <p>Standard Deviation: {stats.stdDev}</p>
