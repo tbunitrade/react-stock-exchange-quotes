@@ -60,7 +60,10 @@ if (isset($data['mean'], $data['stdDev'], $data['mode'], $data['min'], $data['ma
     $mode = $data['mode'];
     $min = $data['min'];
     $max = $data['max'];
+
+    // Преобразование timestamp в формат MySQL
     $timestamp = $data['timestamp'];
+    $timestamp = date('Y-m-d H:i:s', strtotime($timestamp)); // Конвертация в формат MySQL
 
     // SQL-запрос для вставки данных
     $sql = "INSERT INTO statistics (mean, std_dev, mode, min, max, timestamp) VALUES ('$mean', '$stdDev', '$mode', '$min', '$max', '$timestamp')";
