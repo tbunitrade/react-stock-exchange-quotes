@@ -5,7 +5,7 @@ import {
   calculateMode,
   calculateMin,
   calculateMax
-} from './utils/calculations';
+} from './utils/calculations'; // Допустим, у нас есть модуль для расчетов
 
 function App() {
   const [quotes, setQuotes] = useState([]);
@@ -57,12 +57,12 @@ function App() {
         mode,
         min,
         max,
-        timestamp: new Date().toISOString(), // добавим дату и время расчетов
+        timestamp: new Date().toISOString(),
       };
 
       setStats(newStats);
 
-      // Отправка статистики на сервер
+      // Отправка статистики на сервер с дополнительной отладкой
       fetch('http://localhost:8888/reactjs/spa-stock-quotes/save-statistics.php', {
         method: 'POST',
         headers: {
@@ -70,11 +70,11 @@ function App() {
         },
         body: JSON.stringify(newStats),
       })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log('Statistics saved:', data);
+          .then(response => response.text()) // Используем .text() для получения полного ответа
+          .then(data => {
+            console.log('Response from server:', data); // Здесь мы выводим полный ответ сервера
           })
-          .catch((error) => {
+          .catch(error => {
             console.error('Error saving statistics:', error);
           });
     }
